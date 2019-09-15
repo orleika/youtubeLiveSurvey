@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <link rel="stylesheet" href="normalize.css">
+  <link rel="stylesheet" href="app.css">
+  <title>YoutubeLiveSurvey</title>
+</head>
+
+<body>
+  <div class="wrapper">
+    <aside>
+      <div class="container">
+        <div>
+          <label for="url">URL</label>
+          <input type="url" id="urlField" placeholder="URL">
+        </div>
+        <div>
+          <label for="titleField">アンケートタイトル</label>
+          <input type="text" id="titleField" placeholder="アンケートタイトル">
+        </div>
+        <div>
+          <label for="limitField">集計時間（秒）</label>
+          <input type="number" id="limitField" placeholder="集計時間 (秒)">
+        </div>
+        <div id="choicesForm" style="height: 50%; display: flex; flex-direction: column; justify-content: space-evenly;">
+          <div>
+            <label for="choiceField_1">項目1</label>
+            <input type="text" id="choiceField_1" placeholder="項目1">
+          </div>
+          <div>
+            <label for="choiceField_2">項目2</label>
+            <input type="text" id="choiceField_2" placeholder="項目2">
+          </div>
+          <div>
+            <label for="choiceField_3">項目3</label>
+            <input type="text" id="choiceField_3" placeholder="項目3">
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: row; justify-content: space-between;">
+          <button id="setButton">SET</button>
+          <button id="readyButton">READY</button>
+          <button id="stopButton">STOP</button>
+        </div>
+      </div>
+    </aside>
+    <main>
+      <div class="container">
+        <div id="title" class="border-item">泉の精霊に落とした斧の種類を問われました。あなたは何を選ぶか。</div>
+        <ol id="choices" style="width: 100%; height: 80%; display: flex; flex-direction: column; justify-content: space-evenly; margin-right: auto;">
+          <li class="border-item">あなたが選んだのは金の斧</li>
+          <li class="border-item">あなたが選んだのは銀の斧</li>
+          <li class="border-item">あなたが選んだのは銅の斧</li>
+        </ol>
+        <div id="limit" class="border-item" style="text-align: right; margin-right: 0;">残り時間 100秒</div>
+      </div>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+
+</html>

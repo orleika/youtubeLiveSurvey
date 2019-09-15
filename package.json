@@ -1,0 +1,37 @@
+{
+  "name": "youtube_live_survey",
+  "version": "0.0.0",
+  "description": "Youtubeライブ配信で手軽にアンケートを開始できます",
+  "author": "orleika <admin@orleika.io>",
+  "license": "MIT",
+  "main": "index.js",
+  "bin": {
+    "kosaka": "index.js"
+  },
+  "engines": {
+    "node": "12.x"
+  },
+  "pkg": {
+    "assets": [
+      "app/**/*"
+    ]
+  },
+  "scripts": {
+    "build": "cp node_modules/normalize.css/normalize.css app/ && cp node_modules/milligram/dist/milligram.min.css app/",
+    "lint": "semistandard --fix app/*.js index.js",
+    "pkg": "pkg . --targets node12-win-x64",
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "jest": "^24.9.0",
+    "milligram": "^1.3.0",
+    "normalize.css": "^8.0.1",
+    "pkg": "^4.4.0",
+    "semistandard": "^14.2.0"
+  },
+  "dependencies": {
+    "carlo": "^0.9.46",
+    "request": "^2.88.0"
+  }
+}
