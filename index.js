@@ -8,13 +8,15 @@ if (!process.env.API_KEY) {
 }
 const key = process.env.API_KEY;
 
+let readyStart = null;
 let capturing = false;
 let counting = false;
 let votes = [0, 0, 0];
 let members = [];
 let done = false;
 
-const ready = async (url) => {
+const ready = async (url, startTime) => {
+  readyStart = startTime;
   capturing = true;
   counting = false;
   votes = [0, 0, 0];
@@ -91,7 +93,8 @@ const chat = (chatId, pageToken = '') => {
       return {
         message: item.snippet.displayMessage,
         author: item.authorDetails.channelId,
-        isChatOwner: item.authorDetails.isChatOwner
+        isChatOwner: item.authorDetails.isChatOwner,
+        publishedAt: new Date(item.snippet.publishedAt).getTime()
       };
     });
   }
@@ -123,12 +126,15 @@ const chat = (chatId, pageToken = '') => {
 
 const count = (snippets) => {
   snippets.forEach((snippet) => {
-    if (!members.includes(snippet.author)) {
+    if (snippet.publishedAt >= readyStart && !members.includes(snippet.author)) {
       if (snippet.message.trim() === '1' || snippet.message.trim() === '１') {
+        members.push(snippet.author);
         votes[0]++;
       } else if (snippet.message.trim() === '2' || snippet.message.trim() === '２') {
+        members.push(snippet.author);
         votes[1]++;
       } else if (snippet.message.trim() === '3' || snippet.message.trim() === '３') {
+        members.push(snippet.author);
         votes[2]++;
       }
     }
@@ -139,9 +145,8 @@ const start = (snippets) => {
   if (!snippets) {
     return;
   }
-  console.log(snippets);
   for (let i = 0; i < snippets.length; i++) {
-    if (snippets[i].isChatOwner) {
+    if (snippets[i].publishedAt >= readyStart && snippets[i].isChatOwner) {
       counting = true;
       count(snippets.slice(i++));
       return;
@@ -157,20 +162,15 @@ const start = (snippets) => {
   app.on('exit', () => process.exit());
   app.serveFolder(__dirname);
 
-  app.exposeFunction('ready', (args) => {
-    try {
-      const context = JSON.parse(args);
-      ready(context.args[0]);
-    } catch (err) {
-      console.error(err);
-    }
+  await app.exposeFunction('ready', (args) => {
+    ready(args.url, args.startTime);
   });
 
-  app.exposeFunction('stop', () => {
+  await app.exposeFunction('stop', () => {
     stop();
   });
 
-  app.exposeFunction('info', () => {
+  await app.exposeFunction('info', () => {
     return info();
   });
   await app.load('app/app.html');

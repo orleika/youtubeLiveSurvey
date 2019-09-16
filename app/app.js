@@ -62,7 +62,7 @@
   const sum = function (arr) {
     return arr.reduce(function (prev, curr) {
       return prev + curr;
-    });
+    }, 0);
   };
 
   const view = () => {
@@ -96,13 +96,13 @@
     function createStatus () {
       const statusText = document.createElement('span');
       if (store.done) {
-        statusText.innerHTML = `回答数 <strong style="3rem">${sum(store.votes)}</strong>`;
+        statusText.innerHTML = `回答数 <strong style="font-size: 3rem;">${sum(store.votes)}</strong>`;
       } else {
-        statusText.innerHTML = `残り時間 <strong style="3rem">${store.time.value}</strong> 秒`;
+        statusText.innerHTML = `残り時間 <strong style="font-size: 3rem;">${store.time.value}</strong> 秒`;
       }
       return statusText;
     }
-    if (store.time.change) {
+    if (store.time.change || store.done) {
       store.time = store.time.value;
       document.querySelector('#status').innerHTML = '';
       document.querySelector('#status').appendChild(createStatus());
@@ -119,43 +119,44 @@
       document.querySelector('#choiceField_3').value
     ];
     store.time = store.limit;
+    store.done = false;
     view();
   });
 
-  document.querySelector('#readyButton').addEventListener('click', () => {
+  document.querySelector('#readyButton').addEventListener('click', async () => {
     if (!store.url) {
       return;
     }
-    window.ready(store.url);
+    await window.ready({ url: store.url, startTime: Date.now() });
     store.done = false;
     start();
   });
 
-  document.querySelector('#stopButton').addEventListener('click', () => {
-    window.stop();
+  document.querySelector('#stopButton').addEventListener('click', async () => {
+    await window.stop();
   });
 
   const start = () => {
     store.votesStart = null;
     function check () {
-      setTimeout(() => {
-        const info = window.info();
+      setTimeout(async () => {
+        const info = await window.info();
         if (!store.votesStart && info.counting) {
           store.votesStart = Date.now();
         }
         if (info.counting) {
           const diffTime = Date.now() - store.votesStart;
-          store.diff = diffTime;
-          store.time = store.limit - store.diff / 1000;
-          if (store.time <= 0) {
+          store.time = parseInt(store.limit - diffTime / 1000, 10);
+          if (store.time.value <= 0) {
             store.time = 0;
-            window.stop();
+            await window.stop();
           }
         }
         if (!info.done) {
           check();
         } else {
           store.done = true;
+          store.votes = info.votes;
         }
         view();
       }, 100);
