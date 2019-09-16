@@ -71,24 +71,30 @@
       document.querySelector('#title').innerText = store.title.value;
     }
 
-    function createChoice (text) {
+    function createChoice (text, i) {
+      const choice = document.createElement('li');
       if (store.done) {
-
+        choice.classList.add('border-item');
+        choice.style = 'margin-left: 0; margin-right: 0;';
+        const count = document.createElement('div');
+        count.style = 'float: right; font-size: 1.8rem; font-weight: 500;';
+        count.innerText = store.votes[i];
+        choice.innerText = text;
+        choice.appendChild(count);
       } else {
-        const choice = document.createElement('li');
         choice.classList.add('border-item');
         choice.style = 'margin-left: 0; margin-right: 0;';
         choice.innerText = text;
-        return choice;
       }
+      return choice;
     }
 
-    if (store.choices.change) {
+    if (store.choices.change || store.done) {
       store.choices = store.choices.value;
       document.querySelector('#choices').innerHTML = '';
-      store.choices.value.forEach((choice) => {
+      store.choices.value.forEach((choice, index) => {
         if (choice.length) {
-          document.querySelector('#choices').appendChild(createChoice(choice));
+          document.querySelector('#choices').appendChild(createChoice(choice, index));
         }
       });
     }

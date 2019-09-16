@@ -126,6 +126,7 @@ const chat = (chatId, pageToken = '') => {
 
 const count = (snippets) => {
   snippets.forEach((snippet) => {
+    console.log(snippet);
     if (snippet.publishedAt >= readyStart && !members.includes(snippet.author)) {
       if (snippet.message.trim() === '1' || snippet.message.trim() === '１') {
         members.push(snippet.author);
