@@ -2,26 +2,30 @@ const carlo = require('carlo');
 const URL = require('url').URL;
 const request = require('request');
 
-const key = 'AIzaSyB6Htj_9YiEZg9JNlOzX73Nrs9r-SFoYLQ';
+if (!process.env.API_KEY) {
+  process.exit(-1);
+}
+const key = process.env.API_KEY;
 
 let capturing = false;
 let counting = false;
 let votes = [0, 0, 0];
 let members = [];
+let done = false;
 
 const ready = async (url) => {
   capturing = true;
   counting = false;
   votes = [0, 0, 0];
   members = [];
+  done = false;
 
   const a = liveId(url);
   const token = await chatId(a);
   let pageToken = '';
-  let ccc = 1;
 
   function capture (wait) {
-    setTimeout(async() => {
+    setTimeout(async () => {
       const c = await chat(token, pageToken);
       if (c.pageToken) {
         pageToken = c.pageToken;
@@ -33,6 +37,8 @@ const ready = async (url) => {
       }
       if (capturing) {
         capture(c.pollingIntervalMillis);
+      } else {
+        done = true;
       }
     }, wait);
   }
@@ -48,7 +54,8 @@ const info = () => {
   return {
     capturing,
     counting,
-    votes
+    votes,
+    done
   };
 };
 
