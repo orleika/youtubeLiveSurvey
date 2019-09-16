@@ -1,6 +1,7 @@
 const carlo = require('carlo');
 const URL = require('url').URL;
 const request = require('request');
+require('dotenv').config();
 
 if (!process.env.API_KEY) {
   process.exit(-1);
